@@ -8,7 +8,10 @@ const curriedLog = curry(log);
 //curriedLog('green', 'Read file', path);
 const logInfo = curriedLog('green');
 const logError = curriedLog('red');
+
 const logErrorWithTitle = logError('Error');
+const logReadFile = logInfo('Read file');
+const logWriteUrlInfo = logInfo('Write to file');
 
 const getMessage = prop('message');
 
@@ -18,7 +21,7 @@ const path = '../data';
 
 let fileData = '';
 
-logInfo('Read file', path);
+logReadFile(path);
 
 try {
   fileData = readFile(path);
@@ -57,7 +60,7 @@ for (let i = 0; i < urls.length; i++) {
 
 const formatedUrlsInfo = JSON.stringify(urlsInfo, null, 2);
 
-logInfo('Write to file', formatedUrlsInfo);
+logWriteUrlInfo(formatedUrlsInfo);
 
 try {
   writeFile('urlsInfo.json', '../', formatedUrlsInfo);
