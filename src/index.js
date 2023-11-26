@@ -1,17 +1,4 @@
-import {
-  allPass,
-  anyPass,
-  applySpec,
-  complement,
-  compose,
-  curry,
-  equals,
-  isNil,
-  match,
-  partial,
-  partialRight,
-  prop, tryCatch
-} from 'ramda';
+import { allPass, anyPass, applySpec, complement, compose, curry, equals, filter, isNil, map, match, partial, partialRight, prop, tryCatch } from 'ramda';
 import { log, readFile, writeFile } from './helpers/index';
 
 console.clear();
@@ -64,6 +51,12 @@ const readFileSafe = createSafeFunction(readFile);
 const parseUrlSafe = createSafeFunction(parseUrl);
 const writeUrlsInfoSafe = createSafeFunction(writeUrlsInfo);
 
+const getMarketUrlsInfo = compose(
+  map(getUrlInfo),
+  filter(isMarketUrl),
+  map(parseUrlSafe),
+)
+
 const path = '../data';
 
 logReadFile(path);
@@ -72,15 +65,7 @@ let fileData = readFileSafe(path);
 
 const urls = splitFileByLine(fileData);
 
-const urlsInfo = [];
-
-for (let i = 0; i < urls.length; i++) {
-  let parsedUrl = parseUrlSafe(urls[i]);
-
-  if (isMarketUrl(parsedUrl)) {
-    urlsInfo.push(getUrlInfo(parsedUrl));
-  }
-}
+const urlsInfo = getMarketUrlsInfo(urls);
 
 const formatedUrlsInfo = formatUrlsInfo(urlsInfo);
 
