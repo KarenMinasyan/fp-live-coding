@@ -1,4 +1,4 @@
-import { allPass, anyPass, applySpec, complement, compose, curry, equals, filter, isNil, map, match, partial, partialRight, prop, tryCatch } from 'ramda';
+import { allPass, anyPass, applySpec, complement, compose, curry, equals, filter, isNil, map, match, partial, partialRight, prop, tryCatch, tap } from 'ramda';
 import { log, readFile, writeFile } from './helpers/index';
 
 console.clear();
@@ -55,20 +55,16 @@ const getMarketUrlsInfo = compose(
   map(getUrlInfo),
   filter(isMarketUrl),
   map(parseUrlSafe),
-)
+);
 
-const path = '../data';
+const app = compose(
+  writeUrlsInfoSafe,
+  tap(logWriteUrlInfo),
+  formatUrlsInfo,
+  getMarketUrlsInfo,
+  splitFileByLine,
+  readFileSafe,
+  tap(logReadFile)
+);
 
-logReadFile(path);
-
-let fileData = readFileSafe(path);
-
-const urls = splitFileByLine(fileData);
-
-const urlsInfo = getMarketUrlsInfo(urls);
-
-const formatedUrlsInfo = formatUrlsInfo(urlsInfo);
-
-logWriteUrlInfo(formatedUrlsInfo);
-
-writeUrlsInfoSafe(formatedUrlsInfo);
+app('../data');
