@@ -1,4 +1,17 @@
-import { allPass, anyPass, complement, compose, curry, equals, isNil, match, partial, partialRight, prop } from 'ramda';
+import {
+  allPass,
+  anyPass,
+  applySpec,
+  complement,
+  compose,
+  curry,
+  equals,
+  isNil,
+  match,
+  partial,
+  partialRight,
+  prop
+} from 'ramda';
 import { log, readFile, writeFile } from './helpers/index';
 
 console.clear();
@@ -16,6 +29,8 @@ const logWriteUrlInfo = logInfo('Write to file');
 const getMessage = prop('message');
 const getHostname = prop('hostname');
 const getProtocol = prop('protocol');
+const getSearch = prop('search');
+const getPathname = prop('pathname');
 
 const formatUrlsInfo = partialRight(JSON.stringify, [null, 2]);
 const writeUrlsInfo = partial(writeFile, ['urlsInfo.json', '../']);
@@ -36,6 +51,13 @@ const isMarketUrl = allPass([hasUrl, isHttpOrHttpsUrl, isMarketHostUrl]);
 
 const parseUrl = (url) => new URL(url);
 const splitFileByLine = match(/[^\r\n]+/g);
+
+const getUrlInfo = applySpec({
+  hostname: getHostname,
+  protocol: getProtocol,
+  pathname: getPathname,
+  query: getSearch,
+})
 
 const path = '../data';
 
@@ -63,14 +85,7 @@ for (let i = 0; i < urls.length; i++) {
   }
 
   if (isMarketUrl(parsedUrl)) {
-    const { hostname, pathname, protocol, search } = parsedUrl;
-
-    urlsInfo.push({
-      protocol,
-      hostname,
-      pathname,
-      query: search,
-    });
+    urlsInfo.push(getUrlInfo(parsedUrl));
   }
 }
 
