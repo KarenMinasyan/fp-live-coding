@@ -1,4 +1,4 @@
-import { compose, curry, prop } from 'ramda';
+import { compose, curry, partial, partialRight, prop } from 'ramda';
 import { log, readFile, writeFile } from './helpers/index';
 
 console.clear();
@@ -16,6 +16,9 @@ const logWriteUrlInfo = logInfo('Write to file');
 const getMessage = prop('message');
 
 const logErrorMessage = compose(logErrorWithTitle, getMessage);
+
+const formatUrlsInfo = partialRight(JSON.stringify, [null, 2]);
+const writeUrlsInfo = partial(writeFile, ['urlsInfo.json', '../']);
 
 const path = '../data';
 
@@ -58,12 +61,12 @@ for (let i = 0; i < urls.length; i++) {
   }
 }
 
-const formatedUrlsInfo = JSON.stringify(urlsInfo, null, 2);
+const formatedUrlsInfo = formatUrlsInfo(urlsInfo);
 
 logWriteUrlInfo(formatedUrlsInfo);
 
 try {
-  writeFile('urlsInfo.json', '../', formatedUrlsInfo);
+  writeUrlsInfo(formatedUrlsInfo);
 } catch (e) {
   logErrorMessage(e);
 }
