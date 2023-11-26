@@ -1,4 +1,4 @@
-import { allPass, anyPass, complement, compose, curry, equals, isNil, partial, partialRight, prop } from 'ramda';
+import { allPass, anyPass, complement, compose, curry, equals, isNil, match, partial, partialRight, prop } from 'ramda';
 import { log, readFile, writeFile } from './helpers/index';
 
 console.clear();
@@ -34,6 +34,9 @@ const hasUrl = complement(isNil);
 const isHttpOrHttpsUrl = anyPass([isHttpUrl, isHttpsUrl]);
 const isMarketUrl = allPass([hasUrl, isHttpOrHttpsUrl, isMarketHostUrl]);
 
+const parseUrl = (url) => new URL(url);
+const splitFileByLine = match(/[^\r\n]+/g);
+
 const path = '../data';
 
 let fileData = '';
@@ -46,7 +49,7 @@ try {
   logErrorMessage(e);
 }
 
-const urls = fileData.match(/[^\r\n]+/g) || [];
+const urls = splitFileByLine(fileData);
 
 const urlsInfo = [];
 
@@ -54,7 +57,7 @@ for (let i = 0; i < urls.length; i++) {
   let parsedUrl;
 
   try {
-    parsedUrl = new URL(urls[i]);
+    parsedUrl = parseUrl(urls[i]);
   } catch (e) {
     logErrorMessage(e);
   }
