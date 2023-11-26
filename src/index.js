@@ -1,4 +1,4 @@
-import { compose, curry, equals, partial, partialRight, prop } from 'ramda';
+import { allPass, anyPass, complement, compose, curry, equals, isNil, partial, partialRight, prop } from 'ramda';
 import { log, readFile, writeFile } from './helpers/index';
 
 console.clear();
@@ -14,13 +14,25 @@ const logReadFile = logInfo('Read file');
 const logWriteUrlInfo = logInfo('Write to file');
 
 const getMessage = prop('message');
-
-const logErrorMessage = compose(logErrorWithTitle, getMessage);
+const getHostname = prop('hostname');
+const getProtocol = prop('protocol');
 
 const formatUrlsInfo = partialRight(JSON.stringify, [null, 2]);
 const writeUrlsInfo = partial(writeFile, ['urlsInfo.json', '../']);
 
 const isMarketHostname = equals('market.yandex.ru');
+const isHttpProtocol = equals('http:');
+const isHttpsProtocol = equals('https:');
+
+const logErrorMessage = compose(logErrorWithTitle, getMessage);
+const isMarketHostUrl = compose(isMarketHostname, getHostname);
+const isHttpUrl = compose(isHttpProtocol, getProtocol);
+const isHttpsUrl = compose(isHttpsProtocol, getProtocol);
+
+const hasUrl = complement(isNil);
+
+const isHttpOrHttpsUrl = anyPass([isHttpUrl, isHttpsUrl]);
+const isMarketUrl = allPass([hasUrl, isHttpOrHttpsUrl, isMarketHostUrl]);
 
 const path = '../data';
 
@@ -47,11 +59,7 @@ for (let i = 0; i < urls.length; i++) {
     logErrorMessage(e);
   }
 
-  if (
-    parsedUrl &&
-    (parsedUrl.protocol === 'https:' || parsedUrl.protocol === 'http:') &&
-    isMarketHostname(parsedUrl.hostname)
-  ) {
+  if (isMarketUrl(parsedUrl)) {
     const { hostname, pathname, protocol, search } = parsedUrl;
 
     urlsInfo.push({
