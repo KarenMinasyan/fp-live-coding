@@ -10,7 +10,7 @@ import {
   match,
   partial,
   partialRight,
-  prop
+  prop, tryCatch
 } from 'ramda';
 import { log, readFile, writeFile } from './helpers/index';
 
@@ -59,30 +59,23 @@ const getUrlInfo = applySpec({
   query: getSearch,
 })
 
-const path = '../data';
+const createSafeFunction = fn => tryCatch(fn, logErrorMessage);
+const readFileSafe = createSafeFunction(readFile);
+const parseUrlSafe = createSafeFunction(parseUrl);
+const writeUrlsInfoSafe = createSafeFunction(writeUrlsInfo);
 
-let fileData = '';
+const path = '../data';
 
 logReadFile(path);
 
-try {
-  fileData = readFile(path);
-} catch (e) {
-  logErrorMessage(e);
-}
+let fileData = readFileSafe(path);
 
 const urls = splitFileByLine(fileData);
 
 const urlsInfo = [];
 
 for (let i = 0; i < urls.length; i++) {
-  let parsedUrl;
-
-  try {
-    parsedUrl = parseUrl(urls[i]);
-  } catch (e) {
-    logErrorMessage(e);
-  }
+  let parsedUrl = parseUrlSafe(urls[i]);
 
   if (isMarketUrl(parsedUrl)) {
     urlsInfo.push(getUrlInfo(parsedUrl));
@@ -93,8 +86,4 @@ const formatedUrlsInfo = formatUrlsInfo(urlsInfo);
 
 logWriteUrlInfo(formatedUrlsInfo);
 
-try {
-  writeUrlsInfo(formatedUrlsInfo);
-} catch (e) {
-  logErrorMessage(e);
-}
+writeUrlsInfoSafe(formatedUrlsInfo);

@@ -1,13 +1,13 @@
 [
   {
-    "protocol": "https:",
     "hostname": "market.yandex.ru",
+    "protocol": "https:",
     "pathname": "/product--planshet-apple-ipad-pro-11-2021-128gb-wi-fi/896183003",
     "query": "?sku=101256529738&glfilter=14871214%3A14897638"
   },
   {
-    "protocol": "http:",
     "hostname": "market.yandex.ru",
+    "protocol": "http:",
     "pathname": "/product--podvesnaia-akusticheskaia-sistema-tannoy-dvs-6t/7846063",
     "query": "?sku=234355435&glfilter=14871214%3A14897637"
   }
