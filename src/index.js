@@ -1,4 +1,4 @@
-import { compose, curry, partial, partialRight, prop } from 'ramda';
+import { compose, curry, equals, partial, partialRight, prop } from 'ramda';
 import { log, readFile, writeFile } from './helpers/index';
 
 console.clear();
@@ -19,6 +19,8 @@ const logErrorMessage = compose(logErrorWithTitle, getMessage);
 
 const formatUrlsInfo = partialRight(JSON.stringify, [null, 2]);
 const writeUrlsInfo = partial(writeFile, ['urlsInfo.json', '../']);
+
+const isMarketHostname = equals('market.yandex.ru');
 
 const path = '../data';
 
@@ -48,7 +50,7 @@ for (let i = 0; i < urls.length; i++) {
   if (
     parsedUrl &&
     (parsedUrl.protocol === 'https:' || parsedUrl.protocol === 'http:') &&
-    parsedUrl.hostname === 'market.yandex.ru'
+    isMarketHostname(parsedUrl.hostname)
   ) {
     const { hostname, pathname, protocol, search } = parsedUrl;
 
