@@ -1,4 +1,4 @@
-import { log, readFile, writeFile } from './helpers/index';
+import { log, readFile, writeFile } from './helpers/index.imperative';
 
 console.clear();
 
