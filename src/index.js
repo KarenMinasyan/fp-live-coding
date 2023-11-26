@@ -1,4 +1,4 @@
-import { curry, prop } from 'ramda';
+import { compose, curry, prop } from 'ramda';
 import { log, readFile, writeFile } from './helpers/index';
 
 console.clear();
@@ -12,6 +12,8 @@ const logErrorWithTitle = logError('Error');
 
 const getMessage = prop('message');
 
+const logErrorMessage = compose(logErrorWithTitle, getMessage);
+
 const path = '../data';
 
 let fileData = '';
@@ -21,7 +23,7 @@ logInfo('Read file', path);
 try {
   fileData = readFile(path);
 } catch (e) {
-  logErrorWithTitle(getMessage(e));
+  logErrorMessage(e);
 }
 
 const urls = fileData.match(/[^\r\n]+/g) || [];
@@ -34,7 +36,7 @@ for (let i = 0; i < urls.length; i++) {
   try {
     parsedUrl = new URL(urls[i]);
   } catch (e) {
-    logErrorWithTitle(getMessage(e));
+    logErrorMessage(e);
   }
 
   if (
@@ -60,5 +62,5 @@ logInfo('Write to file', formatedUrlsInfo);
 try {
   writeFile('urlsInfo.json', '../', formatedUrlsInfo);
 } catch (e) {
-  logErrorWithTitle(getMessage(e));
+  logErrorMessage(e);
 }
